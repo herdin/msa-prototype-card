@@ -1,0 +1,57 @@
+version: 0.2
+
+# 참고 https://jojoldu.tistory.com/282#recentEntries
+#env:
+#  variables:
+#    DIV:
+
+phases:
+  install:
+    commands:
+      - export DIV="\n==================================================\n"
+      - printf $DIV"INSTALL PHASE START AT $(date +"%Y-%m-%d %H:%M:%S")"$DIV
+      - printf $DIV"INSTALL AWS CLI V2 START AT $(date +"%Y-%m-%d %H:%M:%S")"$DIV
+      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - unzip awscliv2.zip
+      - ./aws/install
+      - echo $(/usr/local/bin/aws --version)
+  #      - echo $DIV
+  #      - echo "setting aws config file at $(date +"%Y-%m-%d %H:%M:%S")"
+  #      - export AWS_CONFIG_PATH=~/.aws
+  #      - export AWS_CONFIG_CREDENTIALS=credentials
+  #      - export AWS_CONFIG_CONFIG=config
+  #      - mkdir $AWS_CONFIG_PATH
+  #      - echo "[default]" >> $AWS_CONFIG_PATH/$AWS_CONFIG_CREDENTIALS
+  #      - echo "aws_access_key_id = $AWS_KEY_ID" >> $AWS_CONFIG_PATH/$AWS_CONFIG_CREDENTIALS
+  #      - echo "aws_secret_access_key = $AWS_KEY_VALUE" >> $AWS_CONFIG_PATH/$AWS_CONFIG_CREDENTIALS
+  #      - echo "[default]" >> $AWS_CONFIG_PATH/$AWS_CONFIG_CONFIG
+  #      - echo "region = ap-northeast-2" >> $AWS_CONFIG_PATH/$AWS_CONFIG_CONFIG
+  #      - cat $AWS_CONFIG_PATH/$AWS_CONFIG_CREDENTIALS
+  #      - cat $AWS_CONFIG_PATH/$AWS_CONFIG_CONFIG
+  build:
+    commands:
+      - export DOCKER_IMAGE_NAME=msa.card
+      - export DOCKER_IMAGE_TAG=$(date +"%Y%m%d%H%M%S")
+      - printf $DIV"BUILD PHASE START AT $(date +"%Y-%m-%d %H:%M:%S")"$DIV
+      - printf $DIV"DOCKER IMAGE TAG IS $DOCKER_IMAGE_TAG"$DIV
+      - printf $DIV"BOOT JAR BUILD START AT $(date +"%Y-%m-%d %H:%M:%S")"$DIV
+      - chmod +x ./gradlew
+      - ./gradlew bootJar
+      - echo "docker images build start at $(date +"%Y-%m-%d %H:%M:%S")"
+      - echo "$(docker --version)"
+      - docker build -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG .
+  post_build:
+    commands:
+      - export MSA_EXAMPLE_DOCKER_REPOSITORY=*************************************************
+      - printf $DIV"POST BUILD PHASE START AT $(date +"%Y-%m-%d %H:%M:%S")"$DIV
+      - /usr/local/bin/aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin $MSA_EXAMPLE_DOCKER_REPOSITORY/msa.card
+      - printf $DIV"bootJar -> $(ls -al ./build/libs/)"$DIV
+      - printf $DIV"docker images -> $(docker images)"$DIV
+      - docker tag $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG $MSA_EXAMPLE_DOCKER_REPOSITORY/$DOCKER_IMAGE_NAME:latest
+      - docker tag $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG $MSA_EXAMPLE_DOCKER_REPOSITORY/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+      - docker push $MSA_EXAMPLE_DOCKER_REPOSITORY/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+      - docker push $MSA_EXAMPLE_DOCKER_REPOSITORY/$DOCKER_IMAGE_NAME:latest
+
+cache:
+  paths:
+    - '/root/.gradle/caches/**/*'

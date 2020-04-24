@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="card.mng.mapper.CardMapper">
+
+    <select id="getAllCard" resultType="cardModel">
+      select
+        *
+      from tb_card_m
+      where 1=1
+    </select>
+
+    <select id="getCard" resultType="cardModel">
+      select
+        *
+      from tb_card_m
+      where 1=1
+      and card_no = #{cardNo}
+    </select>
+
+    <insert id="addCardMng">
+      insert into tb_card_m values(#{testId}, #{testData})
+    </insert>
+
+</mapper>

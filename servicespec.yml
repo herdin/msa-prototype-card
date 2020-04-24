@@ -1,0 +1,40 @@
+기능:
+  - 카드전체조회:
+      url: GET /cardAllInqr
+      parameter:
+        - 없음
+      return:
+        -card_no: 카드번호
+        -등등
+
+  - 특정카드조회:
+      url: GET / cardInqr
+      parameter:
+        -card_no: 카드번호
+      return:
+        -card_no: 카드번호
+        -등등
+
+  -카드등록:
+    url: PUT /cardRgt
+    parameter:
+      -card_no: 카드번호
+      -등등
+    return:
+      -card_no: 카드번호
+
+  -카드삭제:
+    url: PUT /deleteCard
+    parameter:
+      -card_no: 카드번호
+      -등등
+      return:
+        -card_no: 카드번호
+
+  -카드수정:
+    url: PUT /UpdCard
+    parameter:
+      -card_no: 카드번호
+      -등등
+      return:
+        -card_no: 카드번호
