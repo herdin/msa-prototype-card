@@ -58,7 +58,7 @@ public class VaultConfiguration {
 
     public VaultConfiguration(Environment environment) throws URISyntaxException {
         logger.debug("creator");
-        System.getenv().entrySet().stream().forEach(entry -> logger.info("system enviroment -> {}, {}", entry.getKey(), entry.getValue()));
+        System.getenv().entrySet().stream().forEach(entry -> logger.info("system environment -> {}, {}", entry.getKey(), entry.getValue()));
 
         Optional<String> vaultToken = Optional.of(System.getenv(VAULT_ENVIRONMENT_KEY.TOKEN.value()));
         Optional<String> vaultEndpoint = Optional.of(System.getenv(VAULT_ENVIRONMENT_KEY.ENDPOINT.value()));

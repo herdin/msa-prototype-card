@@ -5,20 +5,25 @@
     <select id="getAllCard" resultType="cardModel">
       select
         *
-      from tb_card_m
+      from tb_card
       where 1=1
     </select>
 
-    <select id="getCard" resultType="cardModel">
+    <select id="getCardInfo" resultType="String">
       select
-        *
-      from tb_card_m
+        CASE WHEN CARD_STA_CD='00' THEN '활성'
+            WHEN CARD_STA_CD='01' THEN '비활성'
+            WHEN CARD_STA_CD='02' THEN '분실'
+            WHEN CARD_STA_CD='03' THEN '폐기'
+            WHEN CARD_STA_CD='04' THEN '미발급'
+            ELSE CARD_STA_CD END
+      from tb_card
       where 1=1
       and card_no = #{cardNo}
     </select>
 
     <insert id="addCardMng">
-      insert into tb_card_m values(#{testId}, #{testData})
+      insert into tb_card values(#{testId}, #{testData})
     </insert>
 
 </mapper>

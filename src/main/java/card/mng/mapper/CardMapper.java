@@ -13,8 +13,8 @@ public interface CardMapper {
     //카드 전체 리스트 조회
     List<CardModel> getAllCard();
 
-    //카드 정보 조회
-    List<CardModel> getCard();
+    //카드 상태 정보 조회
+    String getCardInfo(String cardNo);
 
     //카드입력
     int addCard(CardModel cardModel);

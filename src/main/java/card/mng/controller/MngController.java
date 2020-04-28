@@ -17,17 +17,19 @@ public class MngController {
 
     Logger logger = LoggerFactory.getLogger(MngController.class);
 
-    @GetMapping("/cardAllInqr")
-    public List<CardModel>  cardAllInqr() {
+    //카드전체조회
+    @GetMapping("/getAllCard")
+    public List<CardModel>  getAllCard() {
         List<CardModel> value = cardMapper.getAllCard();
-        logger.debug("return -> {}", value);
+        logger.debug("Mapper return getAllCard-> {}", value);
         return value;
     }
 
-    @GetMapping("/cardInqr")
-    public List<CardModel> cardInqr() {
-        List<CardModel> value = cardMapper.getCard();
-        logger.debug("return -> {}", value);
+    //카드상태조회
+    @GetMapping("/getCardInfo")
+    public String getCardInfo(String cardNo) {
+        String value = cardMapper.getCardInfo(cardNo);
+        logger.debug("Mapper return getCardInfo-> {}", value);
         return value;
     }
 
