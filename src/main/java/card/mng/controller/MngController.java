@@ -3,6 +3,7 @@ package card.mng.controller;
 import card.mng.dto.model.CardModel;
 import card.mng.dto.model.RequestModel;
 import card.mng.mapper.CardMapper;
+import card.mng.service.RemoteAPIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ import java.util.List;
 public class MngController {
     @Autowired
     private CardMapper cardMapper;
+
+    @Autowired
+    private RemoteAPIService remoteAPIService;
 
     Logger logger = LoggerFactory.getLogger(MngController.class);
 
@@ -40,12 +44,6 @@ public class MngController {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    @PostMapping("/user")
-    public String addUser2() {
-        //저장
-        return "save";
-    }
 
     @GetMapping("/user/{id}")
     public RequestModel getUser(@PathVariable String id) {
