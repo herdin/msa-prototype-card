@@ -34,7 +34,15 @@ public class MngController {
     }
 
     @PostMapping("/user")
-    public String addUser() {
+    public String addCardService() {
+        //저장
+        return "save";
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @PostMapping("/user")
+    public String addUser2() {
         //저장
         return "save";
     }
