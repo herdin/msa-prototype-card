@@ -10,20 +10,65 @@
     </select>
 
     <select id="getCardInfo" resultType="String">
-      select
-        CASE WHEN CARD_STA_CD='00' THEN '활성'
-            WHEN CARD_STA_CD='01' THEN '비활성'
-            WHEN CARD_STA_CD='02' THEN '분실'
-            WHEN CARD_STA_CD='03' THEN '폐기'
-            WHEN CARD_STA_CD='04' THEN '미발급'
-            ELSE CARD_STA_CD END
+      select CARD_STA_CD
       from tb_card
       where 1=1
       and card_no = #{cardNo}
     </select>
 
-    <insert id="addCardMng">
-      insert into tb_card values(#{testId}, #{testData})
+    <select id="getUserCardInfo" resultType="userCardInfoModel">
+      select  a.user_id as user_id
+             ,a.card_no as card_no
+             , CASE WHEN CARD_STA_CD='00' THEN 'Active'
+                   WHEN CARD_STA_CD='01' THEN 'Inactive'
+                   WHEN CARD_STA_CD='02' THEN 'Lost'
+                   WHEN CARD_STA_CD='03' THEN 'Disposal'
+                   WHEN CARD_STA_CD='04' THEN 'Not Issued'
+                   ELSE CARD_STA_CD END AS card_sta_nm
+             ,b.card_prd_id as card_prd_id
+             ,c.card_prd_nm as  card_prd_nm
+             ,CASE WHEN card_prd_crg_cd='01' THEN 'Tmoney'
+                  WHEN card_prd_crg_cd='02' THEN 'Alliance Tmoney'
+                  WHEN card_prd_crg_cd='03' THEN 'Mobile Tmoney'
+                  WHEN card_prd_crg_cd='04' THEN 'Cloud Tmoney'
+                  ELSE card_prd_crg_cd END AS card_prd_crg_nm
+    from tb_memcard a
+       , tb_card b
+       , tb_cardprd c
+    where 1=1
+      and a.card_no = b.card_no
+      and b.card_prd_id = c.card_prd_id
+      and a.user_id =#{userId}
+    </select>
+
+    <insert id="addUserCardInfo">
+      insert into tb_memcard values(#{userId}, #{cardNo},#{userId},To_char(now(),'YYYYMMDDHH24MISS'),null,null)
     </insert>
+
+
+
+    <update id="updateUserCardInfo">
+        update tb_card set card_sta_cd = #{cardStatCd}
+                        , updr_id = #{userId}
+                        , upd_dtm =To_char(now(),'YYYYMMDDHH24MISS')
+          where 1=1
+          and card_no =  #{cardNo}
+    </update>
+
+    <delete id="deleteUserCardInfo">
+    delete from tb_memcard
+    where 1=1
+      and user_id =  #{userId}
+      and card_no =  #{cardNo}
+
+    </delete>
+
+    <update id="updateCardInactive">
+        update tb_card set card_sta_cd = '01'
+                        , updr_id = #{userId}
+                        , upd_dtm =To_char(now(),'YYYYMMDDHH24MISS')
+          where 1=1
+          and card_no =  #{cardNo}
+    </update>
 
 </mapper>

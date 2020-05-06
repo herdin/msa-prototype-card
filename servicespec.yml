@@ -1,40 +1,57 @@
 기능:
   - 카드전체조회:
-      url: GET /cardAllInqr
+      url: GET /AllCard
       parameter:
         - 없음
       return:
         -card_no: 카드번호
-        -등등
+        -card_sta_cd : 카드상태코드 #(00:활성, 01:비활성, 02:분실, 03:폐기, 04: 미발급)
+        -card_prd_id : 카드상품ID
+        -rgsr_id : 등록자ID
+        -rgt_dtm : 등록일시
+        -updr_id: 수정자ID
+        -upd_dtm: 수정일시
 
-  - 특정카드조회:
-      url: GET / cardInqr
+  - 카드상태조회:
+      url: GET / CardInfo
       parameter:
         -card_no: 카드번호
       return:
-        -card_no: 카드번호
-        -등등
+        -card_sta_cd: 카드상태코드 #(00:활성, 01:비활성, 02:분실, 03:폐기, 04: 미발급)
 
-  -카드등록:
-    url: PUT /cardRgt
+  -회원의 카드 정보 조회:
+    url: PUT /UserCardInfo
     parameter:
-      -card_no: 카드번호
-      -등등
+      -user_id: 회원ID
     return:
+      -user_id: 회원ID
       -card_no: 카드번호
+      -card_sta_nm: 카드상태 #(00:활성, 01:비활성, 02:분실, 03:폐기, 04: 미발급)
+      -card_prd_id: 카드상품ID
+      -card_prd_nm: 카드상품명
+      -card_prd_ctg_id: 카드상품분류명 #(01: 자사, 02: 카드제휴, 03:모바일제휴, 04:클라우드티머니)
 
-  -카드삭제:
-    url: PUT /deleteCard
+  -회원별 카드 등록 작업:
+    url: Get /UserCardInfoSave
     parameter:
       -card_no: 카드번호
-      -등등
+      -user_id: 회원ID
       return:
-        -card_no: 카드번호
+        -cnt : 저장한 데이터 건수
 
-  -카드수정:
-    url: PUT /UpdCard
+  -회원별 카드 상태 수정:
+    url: Get /UserCardInfoUpdate
     parameter:
       -card_no: 카드번호
-      -등등
+      -user_id: 회원ID
+      -card_sta_cd : 카드상태코드
       return:
-        -card_no: 카드번호
+        -cnt : 수정한 데이터 건수
+
+  -회원별 카드 정보 삭제:
+    url: Get /UserCardDelete
+    parameter:
+      -card_no: 카드번호
+      -user_id: 회원ID
+      return:
+        -cnt: 수정한 데이터 건수
