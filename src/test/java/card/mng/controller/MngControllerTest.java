@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,16 +57,16 @@ public class MngControllerTest {
         ;
     }
 
-    //@Test
+    @Test
     public void addUserCardInfo() throws Exception {
         logger.debug("user card info insert test");
-        mockMvc.perform(get("/UserCardInfoSave")
+
+        mockMvc.perform(put("/card")
                 .param("userId", "s.jo0701")
-                .param("cardNo", "1010000100010006"))
+                .param("cardNo", "1010000100010004"))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string("1")
-                )
+                .andExpect(status().is(491))
+//                .andExpect(content().string("1"))
         ;
     }
 

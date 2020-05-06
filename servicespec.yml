@@ -20,7 +20,7 @@
         -card_sta_cd: 카드상태코드 #(00:활성, 01:비활성, 02:분실, 03:폐기, 04: 미발급)
 
   -회원의 카드 정보 조회:
-    url: PUT /UserCardInfo
+    url: GET /UserCardInfo
     parameter:
       -user_id: 회원ID
     return:
@@ -32,7 +32,7 @@
       -card_prd_ctg_id: 카드상품분류명 #(01: 자사, 02: 카드제휴, 03:모바일제휴, 04:클라우드티머니)
 
   -회원별 카드 등록 작업:
-    url: Get /UserCardInfoSave
+    url: PUT /card
     parameter:
       -card_no: 카드번호
       -user_id: 회원ID
@@ -40,7 +40,7 @@
         -cnt : 저장한 데이터 건수
 
   -회원별 카드 상태 수정:
-    url: Get /UserCardInfoUpdate
+    url: Post /card
     parameter:
       -card_no: 카드번호
       -user_id: 회원ID
@@ -49,7 +49,7 @@
         -cnt : 수정한 데이터 건수
 
   -회원별 카드 정보 삭제:
-    url: Get /UserCardDelete
+    url: Delete /card
     parameter:
       -card_no: 카드번호
       -user_id: 회원ID

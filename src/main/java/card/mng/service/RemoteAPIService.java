@@ -27,8 +27,27 @@ public class RemoteAPIService {
         logger.debug("result -> {}", result);
         return result;
     }
+
     public String fallbackMethod(String url) {
         logger.debug("fallbackMethod, url : {}", url);
         return "defaultResult";
     }
+
+    @HystrixCommand(
+            fallbackMethod = "getUserFallback",
+            commandProperties = {
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "500"),
+                    @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "2"),
+                    @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "2000"),
+                    @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "30"),
+            })
+    public String getUser(String userId) {
+        String result = restTemplate.getForObject("http://member.anmani.link:8090/member/" + userId, String.class);
+        logger.debug("result -> {}", result);
+        return result;
+    }
+    public String getUserFallback(String userId) {
+        return "no-member";
+    }
+
 }

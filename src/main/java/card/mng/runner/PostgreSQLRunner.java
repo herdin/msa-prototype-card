@@ -14,7 +14,6 @@ import org.springframework.core.env.Environment;
 import java.util.Arrays;
 
 @Component
-@DependsOn("vaultConfiguration")
 public class PostgreSQLRunner implements ApplicationRunner {
 
     private Logger logger = LoggerFactory.getLogger(PostgreSQLRunner.class);
@@ -34,10 +33,10 @@ public class PostgreSQLRunner implements ApplicationRunner {
         logger.debug("database username in property -> {}", environment.getProperty("spring.datasource.username"));
         logger.debug("database password in property -> {}", environment.getProperty("spring.datasource.password"));
         //logger.debug("get card status  -> {}", cardMapper.getCardInfo("1010000100010001"));
-        //logger.debug("get card register info  -> {}", cardMapper.getUserCardInfo("s.jo0701"));
+        logger.debug("get card register info  -> {}", cardMapper.getUserCardInfo("s.jo0701"));
         //logger.debug("add user card register info  -> {}", cardMapper.addUserCardInfo("1010000100010006","s.jo0701"));
         //logger.debug("update user card info  -> {}", cardMapper.updateUserCardInfo("1010000100010006","s.jo0701","01"));
-        logger.debug("delete user card info  -> {}", cardMapper.deleteUserCardInfo("1010000100010006","s.jo0701"));
+        //logger.debug("delete user card info  -> {}", cardMapper.deleteUserCardInfo("1010000100010006","s.jo0701"));
     }
 }
 

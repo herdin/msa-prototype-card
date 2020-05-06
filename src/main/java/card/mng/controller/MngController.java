@@ -5,9 +5,12 @@ import card.mng.dto.model.RequestModel;
 import card.mng.dto.model.UserCardInfoModel;
 import card.mng.mapper.CardMapper;
 import card.mng.service.RemoteAPIService;
+import org.apache.coyote.Response;
+import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
@@ -23,6 +26,11 @@ public class MngController {
 
     Logger logger = LoggerFactory.getLogger(MngController.class);
 
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Integer> exceptionHandler(Exception e) {
+        return ResponseEntity.badRequest().body(-1);
+    }
     //카드전체조회
     @GetMapping("/AllCard")
     public List<CardModel>  getAllCard() {
@@ -39,86 +47,74 @@ public class MngController {
         return value;
     }
 
-    /*@GetMapping("/remoteHello")
-    public String remoteHello(String url) throws URISyntaxException {
-        logger.debug("remote hello -> {}", url);
-        return remoteAPIService.getStringResult(url);
-    }*/
+
 
     //회원의 카드 정보 조회
     @GetMapping("/UserCardInfo")
-    public List<UserCardInfoModel> getUserCardInfo(String userId)  throws URISyntaxException {
-
-        //카드등록 화면에서 가져온 값
-        userId = "s.jo0701";
+    public List<UserCardInfoModel> getUserCardInfo(String userId) {
 
         List<UserCardInfoModel> value = cardMapper.getUserCardInfo(userId);
         logger.debug("Mapper return getUserCardInfo-> {}", value);
         return value;
     }
 
+      /*@GetMapping("/remoteHello")
+    public String remoteHello(String url) throws URISyntaxException {
+        logger.debug("remote hello -> {}", url);
+        return remoteAPIService.getStringResult(url);
+    }*/
+
     //회원별 카드 등록 작업
-    @GetMapping(value = "/UserCardInfoSave")
-    public int addUserCardInfo(String cardNo, String userId) {
+    @PutMapping(value = "/card")
+    public ResponseEntity<Integer> addUserCardInfo(String cardNo, String userId) {
 
         int cnt =0;
-
-        //카드등록 화면에서 가져온 값
-        cardNo = "1010000100010006";
-        userId = "s.jo0701";
 
         //카드상태 확인
         String value = cardMapper.getCardInfo(cardNo);
 
         //회원에서 입력한 카드번호가 원장에 있고 발급상태가 활성(00)인지 체크
-        if(value.equals("") || !value.equals("00")){
+        if("".equals(value) || !"00".equals(value)){
             logger.debug("Check your card number and status -> cardNo {}, staus: {}", cardNo,value);
-        }else{
-            //저장
-            cnt =cardMapper.addUserCardInfo(cardNo, userId);
-            logger.debug("Insert your card info -> id:{}, cardNo :{} , cnt:{}", userId, cardNo, cnt);
+            return ResponseEntity.status(490).body(cnt);
         }
 
-        //저장한 갯수 출력
-        return cnt;
+        String remoteUserId = remoteAPIService.getUser(userId);
+        if(remoteUserId == null || "no-member".equals(remoteUserId)) {
+            return ResponseEntity.status(491).body(cnt);
+        }
+        //저장
+        cnt =cardMapper.addUserCardInfo(cardNo, userId);
+        logger.debug("Insert your card info -> id:{}, cardNo :{} , cnt:{}", userId, cardNo, cnt);
+        return ResponseEntity.ok().body(cnt);
     }
 
     //카드 상태 변경 작업
-    @GetMapping(value = "/UserCardInfoUpdate")
-    public int updateUserCardInfo(String cardNo, String userId, String cardStatCd) {
+    @PostMapping(value = "/card")
+    public ResponseEntity<Integer> updateUserCardInfo(String cardNo, String userId, String cardStatCd) {
 
         int cnt =0;
-
-        //카드등록 화면에서 가져온 값
-        cardNo = "1010000100010006";
-        userId = "s.jo0701";
-        cardStatCd = "01";  //카드상태코드(00:활성, 01:비활성, 02:분실, 03:폐기, 04: 미발급)
 
         //카드원장 확인
         String value = cardMapper.getCardInfo(cardNo);
 
         //회원에서 입력한 카드번호가 원장에 있는지 확인
-        if(value.equals("")){
+        if("".equals(value)){
             logger.debug("Check your card number and status -> cardNo {}", cardNo);
+            return ResponseEntity.badRequest().body(cnt);
         }else{
             //저장
             cnt =cardMapper.updateUserCardInfo(cardNo, userId,cardStatCd );
             logger.debug("Update your card info -> id:{}, cardNo :{} ,cardStatCd:{}, cnt:{}", userId, cardNo, cardStatCd,cnt);
+            return ResponseEntity.ok().body(cnt);
         }
-
-        //수정한 갯수 출력
-        return cnt;
     }
 
     //회원별 카드삭제 작업
-    @GetMapping(value = "/UserCardDelete")
+    @DeleteMapping(value = "/card")
     public int DeleteUserCard(String cardNo, String userId) {
 
         int cnt =0;
-
-        //카드등록 화면에서 가져온 값
-        cardNo = "1010000100010006";
-        userId = "s.jo0701";
 
         //삭제
         cnt =cardMapper.deleteUserCardInfo(cardNo, userId );
