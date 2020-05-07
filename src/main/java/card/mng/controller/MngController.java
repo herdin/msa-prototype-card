@@ -68,12 +68,6 @@ public class MngController {
         return ResponseEntity.ok().body(userCardInfoList);
     }
 
-      /*@GetMapping("/remoteHello")
-    public String remoteHello(String url) throws URISyntaxException {
-        logger.debug("remote hello -> {}", url);
-        return remoteAPIService.getStringResult(url);
-    }*/
-
     //회원별 카드 등록 작업
     @CrossOrigin
     @PutMapping(value = "/card")
