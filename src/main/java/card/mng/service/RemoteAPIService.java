@@ -1,5 +1,6 @@
 package card.mng.service;
 
+import card.mng.dto.model.MemberModel;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.slf4j.Logger;

@@ -21,7 +21,7 @@ public interface CardMapper {
     List<UserCardInfoModel> getUserCardInfo(String userId);
 
     //회원별 카드 등록 작업
-    int addUserCardInfo(String cardNo, String userId);
+    int addUserCardInfo(CardModel cardModel);
 
     //회원별 카드 상태 변경 작업
     int updateUserCardInfo(String cardNo, String userId, String cardStatCd);

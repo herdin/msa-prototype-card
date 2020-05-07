@@ -32,6 +32,7 @@ public class MngController {
         return ResponseEntity.badRequest().body(-1);
     }
     //카드전체조회
+    @CrossOrigin
     @GetMapping("/AllCard")
     public List<CardModel>  getAllCard() {
         List<CardModel> value = cardMapper.getAllCard();
@@ -40,6 +41,7 @@ public class MngController {
     }
 
     //카드상태조회
+    @CrossOrigin
     @GetMapping("/CardInfo")
     public String getCardInfo(String cardNo) {
         String value = cardMapper.getCardInfo(cardNo);
@@ -50,12 +52,20 @@ public class MngController {
 
 
     //회원의 카드 정보 조회
-    @GetMapping("/UserCardInfo")
-    public List<UserCardInfoModel> getUserCardInfo(String userId) {
+    @CrossOrigin
+    @GetMapping(value = "/card/user/{userId}")
+    public ResponseEntity<List<UserCardInfoModel>> getUserCardInfo(@PathVariable String userId) {
 
-        List<UserCardInfoModel> value = cardMapper.getUserCardInfo(userId);
-        logger.debug("Mapper return getUserCardInfo-> {}", value);
-        return value;
+        String remoteUserId = remoteAPIService.getUser(userId);
+
+        if(remoteUserId == null || "no-member".equals(remoteUserId)) {
+            return ResponseEntity.status(491).body(null);
+        }
+
+        List<UserCardInfoModel> userCardInfoList = cardMapper.getUserCardInfo(userId);
+        logger.debug("Mapper return getUserCardInfo-> {}", userCardInfoList);
+
+        return ResponseEntity.ok().body(userCardInfoList);
     }
 
       /*@GetMapping("/remoteHello")
@@ -65,31 +75,33 @@ public class MngController {
     }*/
 
     //회원별 카드 등록 작업
+    @CrossOrigin
     @PutMapping(value = "/card")
-    public ResponseEntity<Integer> addUserCardInfo(String cardNo, String userId) {
+    public ResponseEntity<Integer> addUserCardInfo(@RequestBody CardModel cardModel) {
 
         int cnt =0;
 
         //카드상태 확인
-        String value = cardMapper.getCardInfo(cardNo);
+        String value = cardMapper.getCardInfo(cardModel.getCardNo());
 
         //회원에서 입력한 카드번호가 원장에 있고 발급상태가 활성(00)인지 체크
         if("".equals(value) || !"00".equals(value)){
-            logger.debug("Check your card number and status -> cardNo {}, staus: {}", cardNo,value);
+            logger.debug("Check your card number and status -> cardNo {}, staus: {}", cardModel,value);
             return ResponseEntity.status(490).body(cnt);
         }
 
-        String remoteUserId = remoteAPIService.getUser(userId);
+        String remoteUserId = remoteAPIService.getUser(cardModel.getUserId());
         if(remoteUserId == null || "no-member".equals(remoteUserId)) {
             return ResponseEntity.status(491).body(cnt);
         }
         //저장
-        cnt =cardMapper.addUserCardInfo(cardNo, userId);
-        logger.debug("Insert your card info -> id:{}, cardNo :{} , cnt:{}", userId, cardNo, cnt);
+        cnt =cardMapper.addUserCardInfo(cardModel);
+        logger.debug("Insert your card info -> id:{}, cardNo :{} , cnt:{}", cardModel, cnt);
         return ResponseEntity.ok().body(cnt);
     }
 
     //카드 상태 변경 작업
+    @CrossOrigin
     @PostMapping(value = "/card")
     public ResponseEntity<Integer> updateUserCardInfo(String cardNo, String userId, String cardStatCd) {
 
@@ -111,6 +123,7 @@ public class MngController {
     }
 
     //회원별 카드삭제 작업
+    @CrossOrigin
     @DeleteMapping(value = "/card")
     public int DeleteUserCard(String cardNo, String userId) {
 
@@ -131,12 +144,14 @@ public class MngController {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     @GetMapping("/user/{id}")
+    @CrossOrigin
     public RequestModel getUser(@PathVariable String id) {
         RequestModel requestModel = new RequestModel(Integer.parseInt(id), "js");
         return requestModel;
     }
 
     @GetMapping("/user/detail")
+    @CrossOrigin
     public String getUser(@ModelAttribute RequestModel requestModel) {
         return "user id is " + requestModel.getId() + " and name is " + requestModel.getName();
     }

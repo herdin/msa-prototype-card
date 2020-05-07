@@ -10,15 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
+//@AutoConfigureMockMvc
 public class MngControllerTest {
     Logger logger = LoggerFactory.getLogger(MngControllerTest.class);
     @Autowired
@@ -45,19 +43,20 @@ public class MngControllerTest {
         ;
     }
 
-    //@Test
+    @Test
     public void getUserCardInfo() throws Exception {
         logger.debug("user card info load test");
-        mockMvc.perform(get("/UserCardInfo")
-                .param("userId", "s.jo0701"))
+        String userId ="s.jo0701" ;
+        mockMvc.perform(get("/card/user/" + userId))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string("[{\"user_id\":\"s.jo0701\",\"card_no\":\"1010000100010001\",\"card_sta_nm\":\"Active\",\"card_prd_id\":\"001\",\"card_prd_nm\":\"Tmoney\",\"card_prd_crg_nm\":\"Tmoney\"},{\"user_id\":\"s.jo0701\",\"card_no\":\"1010000100010002\",\"card_sta_nm\":\"Inactive\",\"card_prd_id\":\"002\",\"card_prd_nm\":\"Shinhan Tmoney\",\"card_prd_crg_nm\":\"Alliance Tmoney\"}]")
-                )
+                .andExpect(jsonPath("$[0].userId").value("s.jo0701"))
+//                .andExpect(content().string("[{\"user_id\":\"s.jo0701\",\"card_no\":\"1010000100010001\",\"card_sta_nm\":\"Active\",\"card_prd_id\":\"001\",\"card_prd_nm\":\"Tmoney\",\"card_prd_crg_nm\":\"Tmoney\"},{\"user_id\":\"s.jo0701\",\"card_no\":\"1010000100010002\",\"card_sta_nm\":\"Inactive\",\"card_prd_id\":\"002\",\"card_prd_nm\":\"Shinhan Tmoney\",\"card_prd_crg_nm\":\"Alliance Tmoney\"}]")
+
         ;
     }
 
-    @Test
+    //@Test
     public void addUserCardInfo() throws Exception {
         logger.debug("user card info insert test");
 
@@ -73,7 +72,7 @@ public class MngControllerTest {
     //@Test
     public void updateUserCardInfo() throws Exception {
         logger.debug("user card info update test");
-        mockMvc.perform(get("/UserCardInfoUpdate")
+        mockMvc.perform(post("/card")
                 .param("userId", "s.jo0701")
                 .param("cardNo", "1010000100010006")
                 .param("cardStatCd", "01")        )
@@ -84,10 +83,10 @@ public class MngControllerTest {
         ;
     }
 
-    @Test
+    //@Test
     public void deleteUserCard() throws Exception {
         logger.debug("user card info delete test");
-        mockMvc.perform(get("/UserCardDelete")
+        mockMvc.perform(delete("/card")
                 .param("userId", "s.jo0701")
                 .param("cardNo", "1010000100010006"))
                 .andDo(print())
