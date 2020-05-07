@@ -43,7 +43,7 @@ public class RemoteAPIService {
                     @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "30"),
             })
     public String getUser(String userId) {
-        String result = restTemplate.getForObject("http://member.anmani.link:8090/member/" + userId, String.class);
+        String result = restTemplate.getForObject("http://msa.member.anmani.link:8091/member/" + userId, String.class);
         logger.debug("result -> {}", result);
         return result;
     }
