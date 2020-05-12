@@ -14,9 +14,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
-//@AutoConfigureMockMvc
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class MngControllerTest {
     Logger logger = LoggerFactory.getLogger(MngControllerTest.class);
     @Autowired
@@ -33,21 +33,10 @@ public class MngControllerTest {
     }
 
     //@Test
-    public void getCardInfo() throws Exception {
-        logger.debug("card info load test");
-        mockMvc.perform(get("/CardInfo")
-                .param("cardNo", "1010000100010001"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string("00"))
-        ;
-    }
-
-    @Test
     public void getUserCardInfo() throws Exception {
         logger.debug("user card info load test");
         String userId ="s.jo0701" ;
-        mockMvc.perform(get("/card/user/" + userId))
+        mockMvc.perform(get("/card/member/" + userId))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].userId").value("s.jo0701"))
@@ -57,15 +46,40 @@ public class MngControllerTest {
     }
 
     //@Test
+    public void errorCaseNoUser() throws Exception {
+        logger.debug("user card info load test");
+        String userId ="s.jo070" ;
+        mockMvc.perform(get("/card/member/" + userId))
+                .andDo(print())
+                .andExpect(status().isOk()
+
+                )
+//                .andExpect(content().string("[{\"user_id\":\"s.jo0701\",\"card_no\":\"1010000100010001\",\"card_sta_nm\":\"Active\",\"card_prd_id\":\"001\",\"card_prd_nm\":\"Tmoney\",\"card_prd_crg_nm\":\"Tmoney\"},{\"user_id\":\"s.jo0701\",\"card_no\":\"1010000100010002\",\"card_sta_nm\":\"Inactive\",\"card_prd_id\":\"002\",\"card_prd_nm\":\"Shinhan Tmoney\",\"card_prd_crg_nm\":\"Alliance Tmoney\"}]")
+
+        ;
+    }
+
+    @Test
     public void addUserCardInfo() throws Exception {
         logger.debug("user card info insert test");
-
-        mockMvc.perform(put("/card")
-                .param("userId", "s.jo0701")
-                .param("cardNo", "1010000100010004"))
+        String userId ="s.jo0701" ;
+        String cardNo ="1010000100010003" ;
+        mockMvc.perform(put("/card/"+cardNo+"/member/"+userId))
                 .andDo(print())
-                .andExpect(status().is(491))
-//                .andExpect(content().string("1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("493"))
+        ;
+    }
+
+    //@Test
+    public void deleteUserCard() throws Exception {
+        logger.debug("user card info delete test");
+        String userId ="s.jo0701" ;
+        String cardNo ="1010000100010004" ;
+        mockMvc.perform(delete("/card/"+cardNo+"/member/"+userId))
+                .andDo(print())
+                .andExpect(status().isOk())
+
         ;
     }
 
@@ -76,19 +90,6 @@ public class MngControllerTest {
                 .param("userId", "s.jo0701")
                 .param("cardNo", "1010000100010006")
                 .param("cardStatCd", "01")        )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string("1")
-                )
-        ;
-    }
-
-    //@Test
-    public void deleteUserCard() throws Exception {
-        logger.debug("user card info delete test");
-        mockMvc.perform(delete("/card")
-                .param("userId", "s.jo0701")
-                .param("cardNo", "1010000100010006"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1")

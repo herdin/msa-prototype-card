@@ -16,6 +16,13 @@
       and card_no = #{cardNo}
     </select>
 
+    <select id="getMemCardInfo" resultType="Integer">
+      select count(1)
+      from tb_memcard
+      where 1=1
+      and card_no = #{cardNo}
+    </select>
+
     <select id="getUserCardInfo" resultType="userCardInfoModel">
       select  a.user_id as user_id
              ,a.card_no as card_no

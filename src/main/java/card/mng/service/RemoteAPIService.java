@@ -1,5 +1,6 @@
 package card.mng.service;
 
+import card.mng.dto.model.CardModel;
 import card.mng.dto.model.MemberModel;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
@@ -16,9 +17,9 @@ public class RemoteAPIService {
         this.restTemplate = new RestTemplate();
     }
     @HystrixCommand(
-            fallbackMethod = "fallbackMethod",
+            fallbackMethod = "defaultFallback",
             commandProperties = {
-                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "500"),
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "1000"),
                     @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "2"),
                     @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "2000"),
                     @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "30"),
@@ -29,7 +30,7 @@ public class RemoteAPIService {
         return result;
     }
 
-    public String fallbackMethod(String url) {
+    public String defaultFallback(String url) {
         logger.debug("fallbackMethod, url : {}", url);
         return "defaultResult";
     }
@@ -37,18 +38,20 @@ public class RemoteAPIService {
     @HystrixCommand(
             fallbackMethod = "getUserFallback",
             commandProperties = {
-                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "500"),
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000"),
                     @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "2"),
                     @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "2000"),
                     @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "30"),
             })
     public String getUser(String userId) {
+        logger.debug("send user id {}", userId);
         String result = restTemplate.getForObject("http://msa.member.anmani.link:8090/member/" + userId, String.class);
         logger.debug("result -> {}", result);
+
         return result;
     }
     public String getUserFallback(String userId) {
+        logger.debug("Fallback result -> {}", userId);
         return "no-member";
     }
-
 }

@@ -17,11 +17,14 @@ public interface CardMapper {
     //카드 상태 정보 조회
     String getCardInfo(String cardNo);
 
+    //카드 상태 정보 조회
+    int getMemCardInfo(String cardNo);
+
     //회원의 카드 정보 조회
     List<UserCardInfoModel> getUserCardInfo(String userId);
 
     //회원별 카드 등록 작업
-    int addUserCardInfo(CardModel cardModel);
+    int addUserCardInfo( String userId,String cardNo);
 
     //회원별 카드 상태 변경 작업
     int updateUserCardInfo(String cardNo, String userId, String cardStatCd);
